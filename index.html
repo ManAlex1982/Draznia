@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>СТ «Дражня»</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap');
+:root{--green:#173f2a;--green2:#245c3d;--mint:#e8f2e9;--cream:#faf8f1;--gold:#c79b45;--ink:#203128;--muted:#718078;--white:#fff;--shadow:0 16px 45px rgba(23,63,42,.10)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Manrope,Arial,sans-serif;background:var(--cream);color:var(--ink);line-height:1.65}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.25;background-image:radial-gradient(#245c3d18 1px,transparent 1px);background-size:22px 22px;z-index:-1}
+header{background:rgba(23,63,42,.94);backdrop-filter:blur(12px);color:#fff;padding:13px 5%;position:sticky;top:0;z-index:50;box-shadow:0 5px 25px #0002}
+nav{max-width:1200px;margin:auto;display:flex;gap:7px;align-items:center;justify-content:center;flex-wrap:wrap}nav a{color:#fff;text-decoration:none;font-size:13px;font-weight:700;padding:8px 12px;border-radius:20px;transition:.2s}nav a:hover{background:#ffffff18}
+.hero{position:relative;overflow:hidden;padding:92px 5% 78px;text-align:center;color:#fff;background:radial-gradient(circle at 15% 20%,#ffffff20,transparent 28%),radial-gradient(circle at 85% 10%,#c79b4540,transparent 25%),linear-gradient(135deg,#123522,#245c3d 55%,#376b49)}
+.hero:after{content:"🌿";position:absolute;font-size:180px;right:-20px;bottom:-65px;opacity:.09;transform:rotate(-12deg)}
+.hero h1{font-family:"Playfair Display",serif;font-size:clamp(44px,7vw,76px);letter-spacing:1px;margin:0;text-shadow:0 4px 20px #0003}.hero p{font-size:18px;opacity:.94}.hero .tag{display:inline-block;border:1px solid #ffffff55;background:#ffffff12;border-radius:30px;padding:7px 15px;font-size:13px;letter-spacing:1px}
+.container{max-width:1160px;margin:auto;padding:62px 5%}.container>h2{font-family:"Playfair Display",serif;font-size:34px;margin:0 0 25px;color:var(--green)}.container>h2:after{content:"";display:block;width:55px;height:3px;background:var(--gold);margin-top:9px;border-radius:5px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:20px}.card{background:rgba(255,255,255,.92);padding:25px;border:1px solid #173f2a10;border-radius:20px;box-shadow:var(--shadow);margin-bottom:16px;transition:.25s}.card:hover{transform:translateY(-3px);box-shadow:0 20px 50px #173f2a18}.card h3{font-size:20px;color:var(--green);margin:0 0 8px}.meta{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px}
+.stats{max-width:950px;margin:35px auto 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:14px}.stat{background:#ffffff12;border:1px solid #ffffff25;backdrop-filter:blur(8px);color:#fff;padding:19px;border-radius:18px;text-align:center}.stat b{font-size:27px;display:block;color:#f4d38e}
+.btn,button{border:0;background:var(--green2);color:#fff;padding:11px 16px;border-radius:10px;cursor:pointer;text-decoration:none;display:inline-block;font-family:inherit;font-weight:700;transition:.2s}.btn:hover,button:hover{background:#173f2a;transform:translateY(-1px)}button.danger{background:#a53d36}.admin-card{background:linear-gradient(135deg,#f5eddc,#fff);border:1px solid #c79b4540}
+input,textarea,select{width:100%;padding:12px 13px;margin:6px 0 15px;border:1px solid #d8e0da;background:#fff;border-radius:10px;font:inherit;color:var(--ink)}textarea{min-height:135px}
+.modal{display:none;position:fixed;inset:0;background:#0b2016b8;backdrop-filter:blur(5px);z-index:100;padding:25px}.modalbox{background:var(--cream);max-width:700px;margin:25px auto;padding:30px;border-radius:22px;max-height:92vh;overflow:auto;box-shadow:0 30px 80px #0005}.modalbox h2{font-family:"Playfair Display",serif}
+.error{color:#9b2929}.success{color:#176b36}.hidden{display:none}
+.empty{padding:28px;text-align:center;border:1px dashed #bfcac1;border-radius:16px;color:var(--muted);background:#ffffff80}
+footer{background:#123522;color:#fff;text-align:center;padding:35px}.footer-title{font-family:"Playfair Display",serif;font-size:25px;margin-bottom:5px}.footer-small{opacity:.7;font-size:13px}
+.section-intro{max-width:700px;color:var(--muted);margin-top:-10px;margin-bottom:25px}
+@media(max-width:600px){header{padding:10px 3%}.hero{padding:65px 5% 55px}.container{padding:45px 5%}.stats{grid-template-columns:1fr 1fr}.stat b{font-size:22px}nav a{font-size:11px;padding:7px 8px}}
+</style>
+</head>
+<body>
+<header><nav>
+<a href="#home">Главная</a><a href="#news">Новости</a><a href="#announcement">Объявления</a><a href="#document">Документы</a><a href="#finance">Финансы</a><a href="#modernization">Модернизация</a><a href="#gallery">Фото</a><a href="#contact">Контакты</a><a href="#admin">🔐 Админ</a>
+</nav></header>
+<section class="hero" id="home"><span class="tag">САДОВОЕ ТОВАРИЩЕСТВО • МИНСК</span><h1>СТ «ДРАЖНЯ»</h1><p>Место, которое мы создаём вместе</p><p><b>Прозрачность • Развитие • Комфорт • Законность</b></p>
+<div class="stats"><div class="stat"><b>400</b>членов</div><div class="stat"><b>170 кВт</b>текущая мощность</div><div class="stat"><b>≥400 кВт</b>необходимая мощность</div><div class="stat"><b>1000 кВт</b>КТП в проекте</div></div></section>
+
+<section class="container" id="news"><h2>📰 Новости</h2><p class="section-intro">Важные события, решения и новости нашего товарищества — всё в одном месте.</p><div id="newsList"></div></section>
+<section class="container" id="announcement"><h2>📢 Объявления</h2><p class="section-intro">Собрания, сроки, работы и информация, которую важно знать каждому члену товарищества.</p><div id="announcementList"></div></section>
+<section class="container" id="document"><h2>📄 Документы</h2><p class="section-intro">Устав, протоколы, проекты, сметы и другие документы товарищества.</p><div id="documentList"></div></section>
+<section class="container" id="finance"><h2>💰 Финансы</h2><p class="section-intro">Понятная и открытая информация о сметах, расходах и финансовых решениях.</p><div id="financeList"></div></section>
+<section class="container" id="modernization"><h2>⚡ Модернизация</h2><p class="section-intro">Проекты развития инфраструктуры, электроснабжения и благоустройства территории.</p><div id="modernizationList"></div></section>
+<section class="container" id="gallery"><h2>📷 Фото и видео</h2><p class="section-intro">Фотографии территории, мероприятий и выполненных работ.</p><div id="galleryList"></div></section>
+<section class="container" id="contact"><h2>📞 Контакты</h2><p class="section-intro">Официальные контакты и способы связи с товариществом.</p><div id="contactList"></div></section>
+
+<section class="container" id="admin"><div class="card admin-card">
+<h2>🔐 Панель администратора</h2><div id="loginBox">
+<label>E-mail</label><input id="email" type="email" autocomplete="username">
+<label>Пароль</label><input id="password" type="password" autocomplete="current-password">
+<button onclick="login()">Войти</button>
+<button onclick="signup()">Создать аккаунт</button>
+<p id="authMsg"></p></div>
+<div id="adminBox" class="hidden"><p class="success">Вы вошли как администратор.</p>
+<button onclick="openForm()">➕ Добавить материал</button> <button onclick="logout()">Выйти</button>
+<div id="adminItems"></div></div>
+</div></section>
+
+<div class="modal" id="modal"><div class="modalbox">
+<h2 id="modalTitle">Добавить материал</h2>
+<form onsubmit="savePost(event)">
+<input type="hidden" id="postId">
+<label>Раздел</label><select id="type" style="width:100%;padding:11px;margin:5px 0 13px">
+<option value="news">Новости</option><option value="announcement">Объявления</option><option value="document">Документы</option><option value="finance">Финансы</option><option value="modernization">Модернизация</option><option value="gallery">Фото и видео</option><option value="contact">Контакты</option></select>
+<label>Заголовок</label><input id="title" required>
+<label>Текст</label><textarea id="body"></textarea>
+<label>Файл (PDF/JPG/PNG, до 10 МБ)</label><input id="file" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp">
+<label>Или ссылка</label><input id="fileUrl" placeholder="https://...">
+<button type="submit">Опубликовать</button><button type="button" onclick="closeForm()">Отмена</button>
+<p id="formMsg"></p></form></div></div>
+
+<footer><div class="footer-title">СТ «Дражня»</div><div class="footer-small">Информационная площадка товарищества • Вместе создаём место, которым хочется гордиться</div></footer>
+<script>
+const client=supabase.createClient(window.SUPABASE_URL,window.SUPABASE_KEY);
+const labels={news:'Новости',announcement:'Объявления',document:'Документы',finance:'Финансы',modernization:'Модернизация',gallery:'Фото и видео',contact:'Контакты'};
+let posts=[],session=null;
+
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
+async function load(){
+ const {data,error}=await client.from('posts').select('*').eq('published',true).order('created_at',{ascending:false});
+ if(error){console.error(error);return} posts=data||[];
+ Object.keys(labels).forEach(t=>{
+  const el=document.getElementById(t+'List'); el.innerHTML='';
+  posts.filter(x=>x.type===t).forEach(x=>{let c=document.createElement('div');c.className='card';
+   c.innerHTML=`<h3>${esc(x.title)}</h3><div class="meta">${new Date(x.created_at).toLocaleDateString('ru-RU')}</div><p>${esc(x.body).replace(/\n/g,'<br>')}</p>${x.file_url?`<a class="btn" href="${esc(x.file_url)}" target="_blank">Открыть файл</a>`:''}`;
+   el.appendChild(c)});
+  if(!el.children.length)el.innerHTML='<div class="card">Пока нет опубликованных материалов.</div>';
+ });
+ renderAdmin();
+}
+async function checkAdmin(){
+ const {data:{user}}=await client.auth.getUser(); session=user;
+ if(!user){loginBox.classList.remove('hidden');adminBox.classList.add('hidden');return}
+ const {data}=await client.from('admin_users').select('user_id').eq('user_id',user.id).maybeSingle();
+ if(data){loginBox.classList.add('hidden');adminBox.classList.remove('hidden');renderAdmin()}else{authMsg.textContent='Аккаунт зарегистрирован, но не является администратором.'}
+}
+async function login(){authMsg.textContent='';let {error}=await client.auth.signInWithPassword({email:email.value,password:password.value});if(error)authMsg.textContent=error.message;else await checkAdmin()}
+async function signup(){authMsg.textContent='';let {error}=await client.auth.signUp({email:email.value,password:password.value});if(error)authMsg.textContent=error.message;else authMsg.textContent='Проверьте e-mail. Первый зарегистрированный пользователь становится администратором.'}
+async function logout(){await client.auth.signOut();await checkAdmin()}
+function openForm(p=null){modal.style.display='block';formMsg.textContent='';postId.value=p?.id||'';type.value=p?.type||'news';title.value=p?.title||'';body.value=p?.body||'';fileUrl.value=p?.file_url||'';modalTitle.textContent=p?'Изменить материал':'Добавить материал'}
+function closeForm(){modal.style.display='none'}
+async function savePost(e){
+ e.preventDefault();formMsg.textContent='Сохраняем...';
+ let url=fileUrl.value;
+ const f=file.files[0];
+ if(f){
+  if(f.size>10*1024*1024){formMsg.textContent='Файл больше 10 МБ.';return}
+  const ext=f.name.split('.').pop().toLowerCase(), path=`${crypto.randomUUID()}.${ext}`;
+  const up=await client.storage.from('draznya-files').upload(path,f,{upsert:false});
+  if(up.error){formMsg.textContent=up.error.message;return}
+  url=client.storage.from('draznya-files').getPublicUrl(path).data.publicUrl;
+ }
+ const obj={type:type.value,title:title.value,body:body.value,file_url:url,published:true,updated_at:new Date().toISOString()};
+ let res;
+ if(postId.value)res=await client.from('posts').update(obj).eq('id',postId.value);else res=await client.from('posts').insert(obj);
+ if(res.error)formMsg.textContent=res.error.message;else{closeForm();await load()}
+}
+async function renderAdmin(){
+ if(!session)return;
+ const el=document.getElementById('adminItems');el.innerHTML='';
+ posts.forEach(p=>{let d=document.createElement('div');d.className='card';d.innerHTML=`<b>${esc(labels[p.type])}: ${esc(p.title)}</b><br><button onclick='editById(${p.id})'>✏️ Изменить</button><button class="danger" onclick='deletePost(${p.id})'>🗑️ Удалить</button>`;el.appendChild(d)})
+}
+function editById(id){const p=posts.find(x=>x.id===id);if(p)openForm(p)}
+async function deletePost(id){if(!confirm('Удалить публикацию?'))return;const {error}=await client.from('posts').delete().eq('id',id);if(error)alert(error.message);else load()}
+client.auth.onAuthStateChange(()=>setTimeout(checkAdmin,0));
+checkAdmin();load();
+</script>
+</body></html>
