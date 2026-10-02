@@ -224,7 +224,7 @@ async function ownerLogout(){
   await client.auth.signOut();
   await checkOwner();
   await checkAdmin();
-} openForm(p=null){modal.style.display='block';formMsg.textContent='';postId.value=p?.id||'';type.value=p?.type||'news';title.value=p?.title||'';body.value=p?.body||'';fileUrl.value=p?.file_url||'';modalTitle.textContent=p?'Изменить материал':'Добавить материал'}
+} function openForm(p=null){modal.style.display='block';formMsg.textContent='';postId.value=p?.id||'';type.value=p?.type||'news';title.value=p?.title||'';body.value=p?.body||'';fileUrl.value=p?.file_url||'';modalTitle.textContent=p?'Изменить материал':'Добавить материал'}
 function closeForm(){modal.style.display='none'}
 async function savePost(e){
  e.preventDefault();formMsg.textContent='Сохраняем...';
