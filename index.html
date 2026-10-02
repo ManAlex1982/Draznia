@@ -31,11 +31,42 @@ footer{background:#123522;color:#fff;text-align:center;padding:35px}.footer-titl
 <body>
 <header><nav>
 <a href="#home">Главная</a><a href="#news">Новости</a><a href="#announcement">Объявления</a><a href="#document">Документы</a><a href="#finance">Финансы</a><a href="#modernization">Модернизация</a><a href="#gallery">Фото</a><a href="#contact">Контакты</a><a href="#admin">🔐 Админ</a>
-</nav></header>
+<a href="#owner">👤 Кабинет собственника</a>/nav></header>
 <section class="hero" id="home"><span class="tag">САДОВОЕ ТОВАРИЩЕСТВО • МИНСК</span><h1>СТ «ДРАЖНЯ»</h1><p>Место, которое мы создаём вместе</p><p><b>Прозрачность • Развитие • Комфорт • Законность</b></p>
 <div class="stats"><div class="stat"><b>400</b>членов</div><div class="stat"><b>300 кВт</b>текущая мощность</div><div class="stat"><b>≥400 кВт</b>необходимая мощность</div><div class="stat"><b>1000 кВт</b>КТП в проекте</div></div></section>
 
-<section class="container" id="news"><h2>📰 Новости</h2><p class="section-intro">Важные события, решения и новости нашего товарищества — всё в одном месте.</p><div id="newsList"></div></section>
+<section class="container" id="owner">
+<div class="card">
+<h2>👤 Кабинет собственника</h2>
+<p class="section-intro">Отдельный вход для каждого собственника СТ «Дражня».</p>
+
+<div id="ownerLoginBox">
+<label>ФИО</label>
+<input id="ownerName" autocomplete="name">
+
+<label>№ участка</label>
+<input id="ownerPlot">
+
+<label>E-mail</label>
+<input id="ownerEmail" type="email" autocomplete="username">
+
+<label>Пароль</label>
+<input id="ownerPassword" type="password" autocomplete="new-password">
+
+<button onclick="ownerSignup()">Зарегистрироваться</button>
+<button onclick="ownerLogin()">Войти</button>
+
+<p id="ownerMsg"></p>
+</div>
+
+<div id="ownerBox" class="hidden">
+<p class="success">Вы вошли в кабинет собственника.</p>
+<div id="ownerInfo"></div>
+<button onclick="ownerLogout()">Выйти</button>
+</div>
+
+</div>
+</section><section class="container" id="news"><h2>📰 Новости</h2><p class="section-intro">Важные события, решения и новости нашего товарищества — всё в одном месте.</p><div id="newsList"></div></section>
 <section class="container" id="announcement"><h2>📢 Объявления</h2><p class="section-intro">Собрания, сроки, работы и информация, которую важно знать каждому члену товарищества.</p><div id="announcementList"></div></section>
 <section class="container" id="document"><h2>📄 Документы</h2><p class="section-intro">Устав, протоколы, проекты, сметы и другие документы товарищества.</p><div id="documentList"></div></section>
 <section class="container" id="finance"><h2>💰 Финансы</h2><p class="section-intro">Понятная и открытая информация о сметах, расходах и финансовых решениях.</p><div id="financeList"></div></section>
@@ -96,7 +127,104 @@ async function checkAdmin(){
 async function login(){authMsg.textContent='';let {error}=await client.auth.signInWithPassword({email:email.value,password:password.value});if(error)authMsg.textContent=error.message;else await checkAdmin()}
 async function signup(){authMsg.textContent='';let {error}=await client.auth.signUp({email:email.value,password:password.value});if(error)authMsg.textContent=error.message;else authMsg.textContent='Проверьте e-mail. Первый зарегистрированный пользователь становится администратором.'}
 async function logout(){await client.auth.signOut();await checkAdmin()}
-function openForm(p=null){modal.style.display='block';formMsg.textContent='';postId.value=p?.id||'';type.value=p?.type||'news';title.value=p?.title||'';body.value=p?.body||'';fileUrl.value=p?.file_url||'';modalTitle.textContent=p?'Изменить материал':'Добавить материал'}
+async function checkOwner(){
+  const {data:{user}}=await client.auth.getUser();
+
+  if(!user){
+    document.getElementById('ownerLoginBox').classList.remove('hidden');
+    document.getElementById('ownerBox').classList.add('hidden');
+    return;
+  }
+
+  const {data,error}=await client.from('members')
+    .select('full_name,plot_number,status')
+    .eq('user_id',user.id)
+    .maybeSingle();
+
+  if(error){
+    document.getElementById('ownerMsg').textContent=error.message;
+    return;
+  }
+
+  document.getElementById('ownerLoginBox').classList.add('hidden');
+  document.getElementById('ownerBox').classList.remove('hidden');
+
+  if(!data){
+    document.getElementById('ownerInfo').innerHTML=
+      '<p>Профиль собственника ещё не создан.</p>';
+    return;
+  }
+
+  const statusText={
+    pending:'Ожидает подтверждения администратора',
+    approved:'Доступ подтверждён',
+    blocked:'Доступ заблокирован'
+  }[data.status] || data.status;
+
+  document.getElementById('ownerInfo').innerHTML=
+    '<p><b>ФИО:</b> '+esc(data.full_name)+'</p>'+
+    '<p><b>Участок:</b> '+esc(data.plot_number)+'</p>'+
+    '<p><b>Статус:</b> '+esc(statusText)+'</p>';
+}
+
+async function ownerSignup(){
+  const msg=document.getElementById('ownerMsg');
+  msg.textContent='';
+
+  const name=document.getElementById('ownerName').value.trim();
+  const plot=document.getElementById('ownerPlot').value.trim();
+  const email=document.getElementById('ownerEmail').value.trim();
+  const password=document.getElementById('ownerPassword').value;
+
+  if(!name||!plot||!email||!password){
+    msg.textContent='Заполните все поля.';
+    return;
+  }
+
+  const {error}=await client.auth.signUp({
+    email:email,
+    password:password,
+    options:{
+      data:{
+        full_name:name,
+        plot_number:plot
+      }
+    }
+  });
+
+  if(error){
+    msg.textContent=error.message;
+  }else{
+    msg.textContent=
+      'Проверьте e-mail. После подтверждения аккаунт будет ожидать одобрения администратора.';
+  }
+}
+
+async function ownerLogin(){
+  const msg=document.getElementById('ownerMsg');
+  msg.textContent='';
+
+  const email=document.getElementById('ownerEmail').value.trim();
+  const password=document.getElementById('ownerPassword').value;
+
+  const {error}=await client.auth.signInWithPassword({
+    email:email,
+    password:password
+  });
+
+  if(error){
+    msg.textContent=error.message;
+    return;
+  }
+
+  await checkOwner();
+}
+
+async function ownerLogout(){
+  await client.auth.signOut();
+  await checkOwner();
+  await checkAdmin();
+} openForm(p=null){modal.style.display='block';formMsg.textContent='';postId.value=p?.id||'';type.value=p?.type||'news';title.value=p?.title||'';body.value=p?.body||'';fileUrl.value=p?.file_url||'';modalTitle.textContent=p?'Изменить материал':'Добавить материал'}
 function closeForm(){modal.style.display='none'}
 async function savePost(e){
  e.preventDefault();formMsg.textContent='Сохраняем...';
