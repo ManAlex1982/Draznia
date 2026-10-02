@@ -185,6 +185,139 @@ async function ownerSignup(){
     email:email,
     password:password,
     options:{
+there is a
+c3e06889-30b8-4637-b196-db46c127475c.jpg
+
+1b3fac90-321e-4aff-8db0-b856cb9fe24c.jpg
+
+b41fa538-843e-49d4-9e8f-5b8aed33f8e2.jpg
+
+ea00e041-e86d-40c1-bbba-ae369605bbce.jpg
+
+933dbc06-f365-4ded-aaca-58d59713e07c.jpg
+
+8eea4117-252a-4ff3-afe8-826421d54342.jpg
+
+880fd093-b89d-4bfa-9536-614921ae4887.jpg
+
+fcf6c217-1238-43d4-874d-8ed3ea073de6.jpg
+
+828eb92c-1b01-41fb-b0a2-4b514d69be79.jpg
+
+519b52af-e9f9-4ab5-bef9-ebb61a71ad5e.jpg
+
+623f1149-1ddd-44a2-a277-02fed0f34125.jpg
+
+46c0e413-4d69-4778-a229-bfd73d66a113.jpg
+
+036785d7-7639-4195-9521-cf78aca3803f.jpg
+
+a76ae973-06f9-4600-a8d1-d54a5c7f307d.jpg
+
+85e3bf82-74ea-4010-81a7-9c7b2dd4af07.jpg
+
+13cf9eb4-fa71-45a8-9014-0d89a764a154.jpg
+
+752176b9-e57d-413b-b199-b7992282f179.jpg
+
+acd78546-cc62-4284-907a-a17df38074e6.jpg
+
+a1360877-cb46-4cd9-bba4-7396152bae85.jpg
+
+78397126-85af-40ee-86ee-d7728f18618e.jpg
+
+d8c81409-2d8f-4eed-b2e6-e3151939ee01.jpg
+
+be458f7d-7404-4da9-b6eb-e376376f4cbf.jpg
+
+fe213038-3190-4b72-a090-67dde03bb214.jpg
+
+ed3975c7-b468-4c81-b196-aa63eb2dde66.jpg
+
+c9a5dff2-09fb-4af8-80b4-e80ae244a732.jpg
+
+e6ed8b78-1467-4a41-9121-97b85710f092.jpg
+
+ddf9205b-4b7d-4e85-921b-2615a953453b.jpg
+Нажимаю зарегистрироваться, ничего не происходит, вверху экрана посторонняя запись nav
+
+debd2de6-2378-4e88-91da-97ead755e1d8.jpg
+
+32091943-36fa-4244-9c0d-656c207f01f5.jpg
+
+5fb9eb1e-129c-45a2-a67f-9cb237b0574e.jpg
+
+0b9b8333-9fc9-4fc7-a414-0598bf78f743.jpg
+
+db3d3f4c-79ff-4852-a5aa-d82545fc7991.jpg
+
+507c695f-60d7-4896-963e-d5724f03f212.jpg
+
+ca170699-2ec0-4b0f-b574-b71398574cf3.jpg
+
+61672d49-bdd2-45bb-9354-96ae03cc63bf.jpg
+
+b93b2563-ff47-4c80-9ec6-6a65068aea71.jpg
+
+9a3d640c-b20c-40a8-90f3-bec0ca343913.jpg
+
+2e950b8e-8f2f-4a0e-8e6c-cc15ebe3898e.jpg
+
+e41981b7-f6dd-43c1-8905-e6882984db22.jpg
+
+382da57f-dc67-419f-95f7-f448bd101d51.jpg
+Зарегистрироваться не работает
+
+626e226e-b229-4c66-996b-47ede3f80715.jpg
+
+6a48ea39-cff4-4765-b146-187d8fc60d04.jpg
+
+2cda758a-ac46-4576-8fb6-19bec305c573.jpg
+
+0f6304f5-0a64-4c4a-b420-4e259efb96fc.jpg
+
+985b4dd4-d279-4d92-85d7-13396512c12d.jpg
+
+Вот ссылка на настройки URL в Supabase:
+
+Supabase — Authentication URL Configuration
+
+Открой её и пришли мне скриншот. Я скажу, что именно там исправить.
+
+Это также может вас заинтересовать.
+
+
+
+Реклама
+
+645e8cff-0b47-46c4-9d01-17234cf90d5d.jpg
+
+Вижу настройки — Site URL у тебя установлен правильно, и Redirect URLs тоже содержит адрес сайта.
+
+Значит, теперь нужно понять, куда именно ведёт ссылка из письма. Это даст точную причину 404.
+
+Сделай только это:
+Открой письмо Supabase ещё раз → нажми Confirm → когда появится страница 404, нажми на адресную строку браузера и пришли мне скриншот полного адреса.
+
+По этому адресу я сразу увижу, что именно отправляет пользователя не туда.
+
+Это также может вас заинтересовать.
+
+
+
+Реклама
+
+7488f182-35bd-47c9-9b64-d3acc8215db3.jpg
+
+Теперь причина понятна. На скриншоте видно, что после подтверждения открывается именно manalex1982.github.io, без /Draznia/. Поэтому GitHub Pages показывает 404.
+
+Надёжнее всего указать адрес сайта прямо в регистрации. Supabase поддерживает emailRedirectTo для этого. 
+
+Сейчас сделаем одно изменение
+В index.html найди внутри ownerSignup() этот фрагмент:
+
+options:{
+  emailRedirectTo:'https://manalex1982.github.io/Draznia/',
       data:{
         full_name:name,
         plot_number:plot
